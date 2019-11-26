@@ -1,0 +1,119 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+{% extends "base.html" %}
+
+{% block title %}Measurement{% endblock %}
+
+{% block body %}
+<!-- if GET -->
+{% if results %}
+<div class="row">
+    <h3>{{ measurement_point.name }}</h3>
+</br>
+</div>
+<div>
+    <!-- bar chart canvas element -->
+    <canvas id="myChart" width="600" height="400"></canvas>
+    <p id="pointSelected">Point selected:</p>
+</div>
+
+<div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Measurement Point</th>
+                <th>Date</th>
+                <th>Nominal</th>
+                <th>Actual</th>
+                <th>Deviation</th>
+            </tr>
+        </thead>
+            <tbody>
+            {% for result in results  %}
+            <tr>
+                <td>{{result.program}}</td>
+                <td>{{result.date}}</td>
+                <td>{{'%0.2f'| format(result.nominal|float)}}</td>
+                <td>{{'%0.2f'| format(result.actual|float)}}</td>
+                <td>{{'%0.2f'| format(result.dev|float)}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+      // Global parameters:
+      // do not resize the chart canvas when its container does (keep at 600x400px)
+      Chart.defaults.global.responsive = false;
+
+      // define the chart data
+      var chartData = {
+        labels : [1, 2, 3, 4, 5],
+        datasets : [{
+            label: 'actual',
+            showLine: false,
+            pointRadius: 7,
+            pointBackgroundColor: "blue",
+            data : [{% for result in results %}
+                       {{'%0.2f'| format(result.actual|float)}},
+                    {% endfor %}],
+        }, {
+            label: 'nominal',
+            fill: false,
+            pointRadius: 0,
+            pointBackgroundColor: "red",
+            borderColor: "red",
+            data : [{% for result in results %}
+                       {{'%0.2f'| format(result.nominal|float)}},
+                    {% endfor %}],
+        }]
+      }
+
+      // get chart canvas
+      var holder = document.getElementById("myChart");
+      var ctx = document.getElementById("myChart").getContext("2d");
+
+      // create the chart using the chart canvas
+      var myChart = new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+          tooltips: {
+            enabled: true,
+            mode: 'single',
+            callbacks: {
+              label: function(tooltipItems, data) {
+                       return tooltipItems.yLabel + 'mm';
+                     }
+            }
+          },
+            scales: {
+                yAxes: [{
+                    display: true,
+                    ticks: {
+                        suggestedMin: 465,    // minimum will be 0, unless there is a lower value.
+                        suggestedMa: 480,
+            }
+        }]
+    }
+        }
+      });
+
+      // get the text element below the chart
+      var pointSelected = document.getElementById("pointSelected");
+
+      // create a callback function for updating the selected index on the chart
+      holder.onclick = function(evt){
+        var activePoint = myChart.getElementAtEvent(evt);
+        console.log(activePoint);
+        console.log('x:' + activePoint[0]._view.x);
+        console.log('maxWidth: ' + activePoint[0]._xScale.maxWidth);
+        console.log('y: ' + activePoint[0]._view.y);
+        console.log('index: ' + activePoint[0]._index);
+        pointSelected.innerHTML = 'Point selected... index: ' + activePoint[0]._index;
+      };
+    </script>
+{% endif %}
+
+
+{% endblock %}
