@@ -4,7 +4,7 @@ from flask_script import Manager
 from measurementTracker import create_app
 from measurementTracker.models import db
 
-app = create_app('measurementTracker.config.ProdConfig')
+app = create_app('measurementTracker.config.DevConfig')
 
 
 manager = Manager(app)
