@@ -2,4 +2,4 @@
 
 from measurementTracker import create_app
 
-application = create_app('measurementTracker.config.ProdConfig')
+application = create_app('measurementTracker.config.DevConfig')

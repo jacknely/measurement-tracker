@@ -20,4 +20,6 @@ Running the web app.
 TBC
 ```
 
+python manage.py runserver
+
 
