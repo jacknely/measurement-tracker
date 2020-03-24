@@ -8,22 +8,22 @@
 </br>
 <div class="media-body">
     <form action="{{ url_for('main.programs') }}" method="post">
-        <label>Program:</label>
-        <select name=program method="POST" action="/">
-            {% for program in programs %}
-            <option value="{{program}}" SELECTED>{{ program }} </option>
+        <label>System:</label>
+        <select name=system_ref method="POST" action="/">
+            {% for system in systems %}
+            <option value="{{ system }}" SELECTED>{{ system }} </option>
             {% endfor %}
-            <option value="" disabled selected hidden>Select a Program</option>
+            <option value="" disabled selected hidden>Select a System</option>
         </select>
         <input type="submit">
     </form>
 </div>
 </br>
 <!-- if GET -->
-{% if results %}
+{% if programs %}
 <div class="row">
     <div class="col-md-12">
-        <h3 class="text-xs-left">{{ selected_program }}</h3>
+        <h3 class="text-xs-left">{{ selected_system }}</h3>
     </div>
 </div>
 <div>
@@ -35,10 +35,10 @@
             </tr>
         </thead>
             <tbody>
-            {% for result in results  %}
+            {% for program in programs  %}
             <tr>
-                <td><a href="{{ url_for('main.program', program_id=result.program_id) }}">{{result.file_name}}</a></td>
-                <td>{{result.date}}</td>
+                <td><a href="{{ url_for('main.program', program_id=program.program_id) }}">{{ program.file_name }}</a></td>
+                <td>{{ program.date }}</td>
             </tr>
             {% endfor %}
         </tbody>

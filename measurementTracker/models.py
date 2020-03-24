@@ -3,6 +3,7 @@ from measurementTracker.data_tools import *
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import csv
+import pathlib
 
 db = SQLAlchemy()
 
@@ -93,15 +94,16 @@ class Program(db.Model):
         """
         saved_programs = db.session.query(Program).all()
         saved_programs = sort_program_meta_from_db(saved_programs)
-        folder_path = os.getcwd() + "\\data\\"  # gets folder path for folder containing data
+        folder_path = pathlib.Path.cwd() / "data"  # gets folder path for folder containing data
         directory = os.listdir(folder_path)  # gets list of directories in folder_path
         filtered_new_programs = []
         for directories in directory:
-            folder_path_local = folder_path + directories + "\\pass"
-            new_programs = get_file_meta_from_directory(folder_path_local)
-            for item in new_programs:
-                if item not in saved_programs:
-                    filtered_new_programs.append(item)
+            if directories[0] == "Z":
+                folder_path_local = pathlib.Path.joinpath(folder_path / directories / "pass")
+                new_programs = get_file_meta_from_directory(folder_path_local)
+                for item in new_programs:
+                    if item not in saved_programs:
+                        filtered_new_programs.append(item)
         return filtered_new_programs
 
     @staticmethod
