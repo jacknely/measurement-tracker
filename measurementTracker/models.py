@@ -138,6 +138,8 @@ class Measurement(db.Model):
     def __repr__(self):  # changes output of object when called
         return f"{self.measurement_point}"
 
+
+
     @classmethod
     def read_file(cls, program: dict, program_id: int):
         """
@@ -175,3 +177,4 @@ class Measurement(db.Model):
                     'measurement_point': raw_data[32][idx],
                 })
         return measurement_points
+

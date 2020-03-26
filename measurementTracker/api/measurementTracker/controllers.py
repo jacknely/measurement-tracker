@@ -1,11 +1,22 @@
-import datetime
 from flask import abort
 from flask_restful import Resource, fields, marshal_with
 from measurementTracker.models import Program, Measurement, User
 
+measurement_fields = {
+    'measurement_id': fields.String,
+    'measurement_point': fields.String,
+    'nominal': fields.Integer,
+    'actual': fields.Integer,
+}
+
 program_fields = {
-    'id': fields.Integer(),
-    'author': fields.String(attribute=lambda x: x.user.username),
+    'program_id': fields.Integer,
+    'file_name': fields.String,
+    'date': fields.DateTime,
+    'program': fields.String,
+    'path': fields.String,
+    'measurement': fields.List(fields.Nested(measurement_fields)),
+
 }
 
 
@@ -20,3 +31,16 @@ class ProgramApi(Resource):
         else:
             programs = Program.query.all()
             return programs
+
+
+class MeasurementApi(Resource):
+    @marshal_with(measurement_fields)
+    def get(self, measurement_id=None):
+        if measurement_id:
+            measurement = Measurement.query.get(measurement_id)
+            if not measurement:
+                abort(404)
+            return measurement
+        else:
+            measurements = Measurement.query.all()
+            return measurements

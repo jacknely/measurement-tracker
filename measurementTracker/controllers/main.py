@@ -1,4 +1,5 @@
 from flask import (
+    jsonify,
     render_template,
     request,
     current_app,
@@ -12,7 +13,6 @@ from flask_principal import Identity, AnonymousIdentity, identity_changed
 from measurementTracker.models import db, Program, User, Role, Measurement
 from measurementTracker.forms import LoginForm, RegistrationForm
 from measurementTracker.extensions import admin_permission
-
 
 main_blueprint = Blueprint("main", __name__, template_folder="../templates/main")
 
@@ -121,8 +121,8 @@ def program(program_id: int) -> tuple:
     program = Program.query.filter_by(program_id=program_id).first()
     results = (
         Measurement.query.join(Program)
-        .filter(Measurement.program_id == program_id)
-        .all()
+            .filter(Measurement.program_id == program_id)
+            .all()
     )
     return render_template("program.html", results=results, program=program), 200
 
@@ -151,6 +151,7 @@ def measurement(measurement_point: str) -> tuple:
         ),
         200,
     )
+
 
 # the following functions are related to login which is currently disabled for testing
 
@@ -207,3 +208,4 @@ def logout():
     )
 
     return redirect(url_for(".index"))
+
