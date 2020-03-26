@@ -21,7 +21,7 @@ main_blueprint = Blueprint("main", __name__, template_folder="../templates/main"
 def index() -> tuple:
     """ index.html route
     get:
-        description: Get all unique programs
+        description: Get all unique systems
         parameters:
             - non
         responses:
@@ -54,7 +54,7 @@ def upload() -> tuple:
 
 
 @main_blueprint.route("/system/<system_ref>", methods=["GET"])
-def system(system_ref):
+def system(system_ref: int) -> tuple:
     """ system route
     get:
         description: returns programs for given system
@@ -72,7 +72,7 @@ def system(system_ref):
 
 
 @main_blueprint.route("/programs", methods=["GET", "POST"])
-def programs():
+def programs() -> tuple:
     """ programs route
     get:
         description: returns programs where user selects system
@@ -107,8 +107,17 @@ def programs():
     return render_template("programs.html", systems=systems_unique), 200
 
 
-@main_blueprint.route("/program/<int:program_id>", methods=["GET", "POST"])
-def program(program_id):
+@main_blueprint.route("/program/<int:program_id>", methods=["GET"])
+def program(program_id: int) -> tuple:
+    """ program route
+    get:
+        description: get all measurement points in given program
+        parameters:
+            - program_id: program id from Program class
+        responses:
+            200:
+                description: html response of measurement points
+    """
     program = Program.query.filter_by(program_id=program_id).first()
     results = (
         Measurement.query.join(Program)
@@ -118,18 +127,23 @@ def program(program_id):
     return render_template("program.html", results=results, program=program), 200
 
 
-@main_blueprint.route("/measurement/<measurement_point>", methods=["GET", "POST"])
-def measurement(measurement_point):
+@main_blueprint.route("/measurement/<measurement_point>", methods=["GET"])
+def measurement(measurement_point: str) -> tuple:
+    """ measurement route
+    get:
+        description: get all point measures in given program
+        parameters:
+            - measurement_point: measurement_point id (eg. R06A773ALF_X)
+        responses:
+            200:
+                description: html response of point measures
+    """
     results = Measurement.query.join(Program).filter(
         Measurement.measurement_point == measurement_point
     )
-    nominal = (
-        Measurement.query.join(Program)
-        .filter(Measurement.measurement_point == measurement_point)
-        .first()
-    )
-    max1 = nominal.nominal + 2
-    min1 = nominal.nominal - 2
+    nominal = (results.filter(Measurement.measurement_point == measurement_point).first()).nominal
+    max1 = nominal + 2
+    min1 = nominal - 2
     measurement_point = {"name": measurement_point, "min": min1, "max": max1}
     return (
         render_template(
@@ -137,6 +151,8 @@ def measurement(measurement_point):
         ),
         200,
     )
+
+# the following functions are related to login which is currently disabled for testing
 
 
 @main_blueprint.route("/login", methods=["GET", "POST"])

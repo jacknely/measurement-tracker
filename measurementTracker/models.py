@@ -153,7 +153,8 @@ class Measurement(db.Model):
             reader = csv.reader(f)
             raw_data = list(map(list, reader))
             for idx, item in enumerate(raw_data[32], start=3):
-                if idx >= len(raw_data[32]): break
+                if idx >= len(raw_data[32]):
+                    break
                 measurement_points.append({
                     'program_id': program_id,
                     'file_name': raw_data[33][0],
