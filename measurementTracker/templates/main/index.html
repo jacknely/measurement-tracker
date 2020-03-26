@@ -5,14 +5,15 @@
 {% block body %}
 <div class="row">
     <div class="col-md-12">
-        <h1 class="text-xs-center">Measurement Programs</h1>
+        <h1 class="text-xs-center">MLA-H L460: System Programs</h1>
     </div>
 </div>
 
 <div class="media-body">
     <ul>
-        {% for program in programs %}
-        <li>{{ program }}</li>
+        {% for system in systems %}
+        <li><a href="{{ url_for('main.system', system_ref=system) }}">
+                    {{ system }}</a></li>
         {% endfor %}
     </ul>
 </div>

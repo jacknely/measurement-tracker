@@ -48,7 +48,7 @@
 
       // define the chart data
       var chartData = {
-        labels : [1, 2, 3, 4, 5],
+        labels : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         datasets : [{
             label: 'actual',
             showLine: false,
@@ -91,8 +91,8 @@
                 yAxes: [{
                     display: true,
                     ticks: {
-                        suggestedMin: 465,    // minimum will be 0, unless there is a lower value.
-                        suggestedMa: 480,
+                        suggestedMin: {{ measurement_point.min }},    // minimum will be 0, unless there is a lower value.
+                        suggestedMax: {{ measurement_point.max }},
             }
         }]
     }

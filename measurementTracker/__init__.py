@@ -4,7 +4,8 @@ from flask_login import login_manager, current_user
 from flask_principal import identity_loaded, UserNeed, RoleNeed
 from measurementTracker.controllers.main import main_blueprint
 from measurementTracker.controllers.measurement import measurement_blueprint
-from measurementTracker.extensions import (login_manager, principal, toolbar)
+from measurementTracker.extensions import login_manager, principal, toolbar
+from .api import create_module as api_create_module
 
 
 def create_app(config_object):
@@ -16,6 +17,7 @@ def create_app(config_object):
     login_manager.init_app(app)
     principal.init_app(app)
     toolbar.init_app(app)
+    api_create_module(app)
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(measurement_blueprint)
@@ -30,6 +32,9 @@ def create_app(config_object):
         if hasattr(current_user, 'roles'):
             for role in current_user.roles:
                 identity.provides.add(RoleNeed(role.name))
+
+    with app.app_context():
+        db.create_all()
 
     return app
 

@@ -3,6 +3,7 @@ from measurementTracker.data_tools import *
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import csv
+import pathlib
 
 db = SQLAlchemy()
 
@@ -93,15 +94,16 @@ class Program(db.Model):
         """
         saved_programs = db.session.query(Program).all()
         saved_programs = sort_program_meta_from_db(saved_programs)
-        folder_path = os.getcwd() + "\\data\\"  # gets folder path for folder containing data
+        folder_path = pathlib.Path.cwd() / "data"  # gets folder path for folder containing data
         directory = os.listdir(folder_path)  # gets list of directories in folder_path
         filtered_new_programs = []
         for directories in directory:
-            folder_path_local = folder_path + directories + "\\pass"
-            new_programs = get_file_meta_from_directory(folder_path_local)
-            for item in new_programs:
-                if item not in saved_programs:
-                    filtered_new_programs.append(item)
+            if directories[0] == "Z":
+                folder_path_local = pathlib.Path.joinpath(folder_path / directories / "pass")
+                new_programs = get_file_meta_from_directory(folder_path_local)
+                for item in new_programs:
+                    if item not in saved_programs:
+                        filtered_new_programs.append(item)
         return filtered_new_programs
 
     @staticmethod
@@ -136,6 +138,8 @@ class Measurement(db.Model):
     def __repr__(self):  # changes output of object when called
         return f"{self.measurement_point}"
 
+
+
     @classmethod
     def read_file(cls, program: dict, program_id: int):
         """
@@ -151,7 +155,8 @@ class Measurement(db.Model):
             reader = csv.reader(f)
             raw_data = list(map(list, reader))
             for idx, item in enumerate(raw_data[32], start=3):
-                if idx >= len(raw_data[32]): break
+                if idx >= len(raw_data[32]):
+                    break
                 measurement_points.append({
                     'program_id': program_id,
                     'file_name': raw_data[33][0],
@@ -172,3 +177,4 @@ class Measurement(db.Model):
                     'measurement_point': raw_data[32][idx],
                 })
         return measurement_points
+
