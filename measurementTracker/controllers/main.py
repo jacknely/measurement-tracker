@@ -1,5 +1,4 @@
 from flask import (
-    jsonify,
     render_template,
     request,
     current_app,
@@ -208,4 +207,3 @@ def logout():
     )
 
     return redirect(url_for(".index"))
-

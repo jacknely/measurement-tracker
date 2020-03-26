@@ -1,6 +1,6 @@
 from flask import abort
 from flask_restful import Resource, fields, marshal_with
-from measurementTracker.models import Program, Measurement, User
+from measurementTracker.models import Program, Measurement
 
 measurement_fields = {
     'measurement_id': fields.String,
